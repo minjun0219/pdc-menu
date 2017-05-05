@@ -1,0 +1,22 @@
+{
+  "extends": [
+    "airbnb-base"
+  ],
+  "plugins": [
+    "babel"
+  ],
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "rules": {
+    "no-console": "off",
+    "comma-dangle": ["error", "never"],
+    "arrow-parens": ["error", "as-needed"],
+    "no-use-before-define": ["error", { "functions": false }]
+  }
+}
