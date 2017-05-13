@@ -97,38 +97,8 @@ function listLabels(auth) {
     });
 }
 
-/**
- * Google Drive 파일 목록
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- * @return {Promise}
- */
-function listFiles(auth) {
-  return promisify(drive.files.list)({
-    auth,
-    pageSize: 10,
-    fields: 'files(id, name)'
-  })
-    .then(response => {
-      const files = response.files;
-      if (files.length === 0) {
-        console.log('No files found.');
-      } else {
-        const table = new Table({
-          head: ['File ID', 'File Name']
-        });
-        files.forEach(file => table.push([file.id, file.name]));
-
-        console.log('Google Drive Files:');
-        console.log(table.toString());
-        console.log();
-      }
-      return auth;
-    });
-}
-
 GoogleAPIs()
   .then(auth => listCalendars(auth))
   .then(auth => listEvents(auth))
   .then(auth => listLabels(auth))
-  .then(auth => listFiles(auth))
   .catch(err => console.log(err));
