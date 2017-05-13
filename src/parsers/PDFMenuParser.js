@@ -85,7 +85,7 @@ class PDFMenuParser {
         };
 
         // 코너를 날짜별로 분리
-        meal.corner.forEach(c => {
+        o.corner.forEach(c => {
           menu.corner.push({
             name: c.name,
             menu: c.menu[idx]
@@ -102,21 +102,11 @@ class PDFMenuParser {
   }
 
   /**
-   * 
-   * 
+   * 메뉴 파싱
    * @param {array} lines 메뉴가 구성될 테이블을 라인
    * @param {any} idx 끼니별 Index 번호
    * @param {any} meals 조/중/석식 데이터
    * @returns
-   */
-  
-  /**
-   * 
-   * 
-   * @param {any} lines 
-   * @param {any} idx 
-   * @param {any} meals 
-   * @returns  
    */
   parseMenu(lines, idx, meals) {
     const boxTexts = this.splitText(lines, meals, TYPE.BOX);
@@ -181,7 +171,7 @@ class PDFMenuParser {
 
   addDate(obj) {
     if (obj.texts) {
-      const text = this.parseText(obj.texts).join('').match(DATE_REGEXP);
+      const text = this.parseText(obj.texts).join().match(DATE_REGEXP);
       if (text[0]) {
         this.date.push(text[0]);
       }
@@ -246,14 +236,14 @@ class PDFMenuParser {
     return this.data;
   }
 
-  static inArea(arr, start, end, direction) {
+  inArea(arr, start, end, direction) {
     return arr.filter(o => {
       const value = nonFix(o[direction]);
       return nonFix(start[direction]) < value && nonFix(end[direction]) > value;
     });
   }
 
-  static prettyTexts(arr) {
+  prettyTexts(arr) {
     return arr.map(obj => ({
       x: obj.sw ? (obj.x + obj.sw) : obj.x,
       y: obj.sw ? (obj.y + obj.sw) : obj.y,
@@ -262,7 +252,7 @@ class PDFMenuParser {
     }));
   }
 
-  static parseText(texts) {
+  parseText(texts) {
     return texts.reduce((prev, current) => {
       if (/^(\(|&|-)/.test(current.text)) {
         const last = prev[prev.length - 1];
@@ -276,7 +266,7 @@ class PDFMenuParser {
       .map(o => o.text);
   }
 
-  static parseDate(text) {
+  parseDate(text) {
     const dateMatch = text.match(DATE_REGEXP);
     if (!dateMatch[0]) return null;
 
@@ -290,7 +280,7 @@ class PDFMenuParser {
   /**
    * @param {Date} date 날짜
    */
-  static setDateTime(date, timeStr) {
+  setDateTime(date, timeStr) {
     const time = timeStr.split(':');
     const newDate = new Date(date);
     newDate.setHours(time[0]);

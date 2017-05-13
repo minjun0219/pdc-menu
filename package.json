@@ -4,7 +4,10 @@
   "main": "index.js",
   "scripts": {
     "auth": "babel-node scripts/auth.js",
-    "start": "babel-node index.js",
+    "prestart": "rimraf dest && npm run lint && npm run compile",
+    "start": "node dest/main.js",
+    "start:es6": "babel-node src/main.js",
+    "compile": "babel src --out-dir dest",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -14,7 +17,12 @@
     "babel-plugin-transform-async-generator-functions": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "base64-stream": "^0.1.3",
+    "chalk": "^1.1.3",
     "cli-table": "^0.3.1",
+    "commander": "^2.9.0",
+    "cron-parser": "^2.4.0",
     "dotenv": "^4.0.0",
     "es6-promisify": "^5.0.0",
     "google-auth-library": "^0.10.0",
@@ -23,7 +31,9 @@
     "moment": "^2.18.1",
     "node-schedule": "^1.2.1",
     "pdf2json": "^1.1.7",
+    "prettyjson": "^1.2.1",
     "readline": "^1.3.0",
+    "rimraf": "^2.6.1",
     "urldecode": "^1.0.1"
   },
   "devDependencies": {

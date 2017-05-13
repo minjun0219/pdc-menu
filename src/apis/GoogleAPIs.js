@@ -1,16 +1,15 @@
 import fs from 'fs';
+import path from 'path';
 import readline from 'readline';
 import GoogleAuth from 'google-auth-library';
 
+const CONFIG = require('../../config/api.json');
+
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/calendar-nodejs-quickstart.json
-const SCOPES = [
-  'https://www.googleapis.com/auth/gmail.modify',
-  'https://www.googleapis.com/auth/gmail.readonly',
-  'https://www.googleapis.com/auth/calendar'
-];
+const SCOPES = CONFIG.SCOPES;
 const TOKEN_DIR = `${(process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE)}/.credentials`;
-const TOKEN_PATH = `${TOKEN_DIR}/pdc-menu.json`;
+const TOKEN_PATH = `${TOKEN_DIR}/${CONFIG.TOKEN_FILENAME}`;
 
 /**
  * 구글 API 인증
@@ -19,7 +18,7 @@ const TOKEN_PATH = `${TOKEN_DIR}/pdc-menu.json`;
 export default function GoogleAPIsAuth() {
   return new Promise((resolve, reject) => {
     // Load client secrets from a local file.
-    fs.readFile('./config/client_secret.json', (err, content) => {
+    fs.readFile(path.resolve(CONFIG.CLIENT_SECRET_PATH), (err, content) => {
       if (err) {
         reject(`Error loading client secret file: ${err}`);
         return;

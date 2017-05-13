@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import promisify from 'es6-promisify';
 import google from 'googleapis';
+import print from '../lib/print';
 
 require('dotenv').config({ silent: true });
 
@@ -11,10 +12,11 @@ const STARRED_LABEL = 'STARRED';
 
 /**
  * 이메일 목록을 체크
+ * @export
  * @param {google.auth.OAuth2} auth Google APIs OAuth2 인증
  * @returns {Promise}
  */
-function CheckEmail(auth) {
+export function CheckEmail(auth) {
   return messagesList(auth)
     .then(res => checkNewLabelMessages(res))
     .then(messageIds => checkNewMessages(messageIds, auth))
@@ -41,7 +43,7 @@ function messagesList(auth) {
  */
 function checkNewLabelMessages(value) {
   if (!value.resultSizeEstimate) {
-    throw new Error('메시지가 없습니다.');
+    throw '메시지가 없습니다.';
   }
   return value.messages.map(message => message.id);
 }
@@ -54,6 +56,7 @@ function checkNewLabelMessages(value) {
  */
 function checkNewMessages(messageIds, auth) {
   const messages = messageIds.map(messageId => (
+
     // 메시지에서 별표 라벨을 제거
     removeMessagesStarredLabel(messageId, auth)
 
@@ -76,8 +79,17 @@ function getMessageAttachments(messageId, auth) {
     id: messageId
   })
 
-  // 첨부파일 확인
+  // 메일 확인
   .then(message => {
+    print(
+      '메시지를 발견 했습니다.',
+      ['Message ID', message.id],
+      ['Subject', getMessageHeader(message, 'Subject')],
+      ['From', getMessageHeader(message, 'From')],
+      ['Date', getMessageHeader(message, 'Date')]
+    );
+
+    // 첨부파일
     const attaches = getAttachments(message, auth);
     return Promise.all(attaches);
   });
@@ -99,10 +111,22 @@ function getAttachments(message, auth) {
         id: attachId,
         messageId: message.id
       })
-        .then(res => ({
-          filename: part.filename,
-          ...res
-        }));
+      .then(res => ({
+        filename: part.filename,
+        ...res
+      }))
+      .then(data => {
+        if (data && data.filename && /\.pdf$/i.test(data.filename)) {
+          print(
+            '첨부파일을 발견 했습니다.',
+            ['Attachment ID', attachId],
+            ['FileName', data.filename]
+          );
+
+          return data;
+        }
+        return null;
+      });
     }
     return null;
   })
@@ -115,14 +139,31 @@ function getAttachments(message, auth) {
  * @param {google.auth.OAuth2} auth Google APIs OAuth2 인증
  */
 function removeMessagesStarredLabel(messageId, auth) {
-  return promisify(gmail.users.messages.modify)({
+  const MESSAGE_API = process.env.NODE_ENV === 'development' ?
+                      gmail.users.messages.modify :
+                      gmail.users.messages.get;
+  return promisify(MESSAGE_API)({
     auth,
     userId: 'me',
     id: messageId,
     resource: {
       removeLabelIds: [STARRED_LABEL]
     }
+  })
+  .then(message => {
+    print(
+      `메시지의 "${STARRED_LABEL}" Label을 제거하였습니다.`,
+      ['Message ID', message.id]
+    );
+    return message;
   });
 }
 
-export { CheckEmail as default };
+/**
+ * 메시지 내용에서 특정 헤더를 가져옴
+ * @param {object} message 메시지
+ */
+function getMessageHeader(message, headerName = 'Subject') {
+  const headers = _.get(message, 'payload.headers');
+  return _.get(_.find(headers, ['name', headerName]), 'value');
+}

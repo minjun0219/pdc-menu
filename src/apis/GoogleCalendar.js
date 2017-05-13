@@ -1,8 +1,10 @@
+import chalk from 'chalk';
 import google from 'googleapis';
 import promisify from 'es6-promisify';
-
 import moment from 'moment';
 import 'moment/locale/ko';
+
+import print from '../lib/print';
 
 require('dotenv').config({ silent: true });
 
@@ -21,7 +23,11 @@ const calendar = google.calendar('v3');
  */
 export function InsertEvents(menu, auth) {
   const list = convertEvents(menu);
-  return Promise.all(list.map(event => insertMenuEvent(auth, event)));
+  console.log();
+  console.log(chalk.cyan.bold('이벤트 등록:'));
+  return Promise.all(list.map(event => insertMenuEvent(auth, event)))
+    .then(() => console.log())
+    .then(() => print(`이벤트를 ${chalk.cyan.bold(list.length)}건 생성하였습니다.`));
 }
 
 /**
@@ -47,7 +53,7 @@ function insertMenuEvent(auth, eventData) {
     calendarId: CALENDAR_ID,
     resource: eventData
   })
-  .then(event => console.log('Event created: %s', event.htmlLink))
+  .then(event => console.log('  - [%s] %s', event.id, event.summary))
   .catch(err => {
     throw new Error(`There was an error contacting the Calendar service: ${err}`);
   });
@@ -76,15 +82,15 @@ function convertEvents(menu) {
       // 식사시간 추가
       data.splice(0, 0, {
         title: '식사시간',
-        description: mealTime(menu.startTime, menu.endTime)
+        description: mealTime(item.startTime, item.endTime)
       });
 
       // 목록에 추가
       list.push({
-        summary: `${menu.name} 메뉴`,
+        summary: `${item.name} 메뉴`,
         description: JSON.stringify(data),
-        start: setDate(menu.startTime),
-        end: setDate(menu.endTime)
+        start: setDate(item.startTime),
+        end: setDate(item.endTime)
       });
     });
   });

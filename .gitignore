@@ -1,5 +1,7 @@
 .env
 .vscode
+.DS_Store
 jsconfig.json
 node_modules
 config/client_secret.json
+dest
