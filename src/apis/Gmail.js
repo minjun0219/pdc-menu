@@ -140,8 +140,8 @@ function getAttachments(message, auth) {
  */
 function removeMessagesStarredLabel(messageId, auth) {
   const MESSAGE_API = process.env.NODE_ENV === 'development' ?
-                      gmail.users.messages.modify :
-                      gmail.users.messages.get;
+                      gmail.users.messages.get :
+                      gmail.users.messages.modify;
   return promisify(MESSAGE_API)({
     auth,
     userId: 'me',
