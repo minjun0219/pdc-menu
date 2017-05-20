@@ -8,15 +8,17 @@ const { printJSON, printError } = require('../src/lib/print');
 
 let fileName;
 program
-  .arguments('<file>')
+  .usage('<file> [options]')
+  .option('-l, --loc <loc>')
   .action(file => (fileName = file))
   .parse(process.argv);
 
 if (fileName && /\.pdf$/i.test(fileName)) {
   const file = fs.readFileSync(fileName);
   const base64 = new Buffer(file).toString('base64');
+  const location = program.loc && program.loc.toUpperCase();
 
-  parsePDFMenu(base64)
+  parsePDFMenu(base64, location)
     .then(data => printJSON(data))
     .catch(err => printError(err));
 }

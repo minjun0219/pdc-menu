@@ -6,11 +6,6 @@ const KEY_Y = 'y';
 
 const COLUMN_KEY = 'column';
 
-const DATE_REGEXP = /(\d{1,12})\/(\d{1,31})/;
-const MEAL_REGEXP = /^(조식|중식|석식)/;
-const MEAL_TIME_REGEXP = /(조식|중식|석식)\((\d{1,2}:\d{1,2})~(\d{1,2}:\d{1,2})\)$/;
-const CORNER_COLOR = '#9bba58';
-
 const TYPE = {
   COLUMN: 0,
   BOX: 1
@@ -45,7 +40,16 @@ class PDFMenuParser {
     this.verticalLines = _.sortBy(fills.filter(o => o.w > o.h && !o.clr), KEY_Y);
     this.horizonLines = _.sortBy(fills.filter(o => o.w < o.h && !o.clr), KEY_X);
 
+    // 문자열을 파싱하기 편하도록 변형
     this.texts = this.prettyTexts(texts);
+
+    // 패턴을 미리 정의
+    this.PATTERN = {
+      DATE: /(\d{1,12})\/(\d{1,31})/,
+      MEAL: /(조식|중식|석식)\((\d{1,2}:\d{1,2})~(\d{1,2}:\d{1,2})\)$/,
+      CORNER: /^(코너|Take|Plus)/,
+      ...this.constructor.PATTERN
+    };
 
     // 테이블의 데이터를 분리
     this.parseTable();
@@ -117,26 +121,34 @@ class PDFMenuParser {
 
     // 끼니가 등록되어 있지 않을때만 등록
     if (!meal) {
-      const { texts } = this.parseBoxTexts(boxTexts);
-      const isMeal = texts.findIndex(o => MEAL_REGEXP.test(o.join(''))) > -1;
+      const data = this.parseBoxTexts(boxTexts);
+      const isMeal = this.isMeal(data);
 
       if (isMeal) { // 끼니 등록
         this.addMeal({
           idx,
-          name: texts
+          name: data.texts
         });
       } else { // 이건 날짜!
         boxTexts.forEach(o => this.addDate(o));
       }
     } else if (meal && !meal.corner.length) { // 코너 등록
-      const { colors } = this.parseBoxTexts(boxTexts);
-      const isCorner = colors.indexOf(CORNER_COLOR) > -1;
+      const data = this.parseBoxTexts(boxTexts);
+      const isCorner = this.isCorner(data);
       if (isCorner) {
         boxTexts.forEach(o => this.addCorner(idx, o));
       }
     } else { // 메뉴 등록
       boxTexts.forEach(o => this.addMenu(idx, o));
     }
+  }
+
+  isMeal({ texts }) {
+    return texts.findIndex(o => this.PATTERN.MEAL.test(o.join(''))) > -1;
+  }
+
+  isCorner({ texts }) {
+    return texts.findIndex(o => this.PATTERN.CORNER.test(o.join(''))) > -1;
   }
 
   getMeal(idx) {
@@ -147,7 +159,7 @@ class PDFMenuParser {
   addMeal(obj) {
     const meal = this.meals.filter(o => o.idx === obj.idx);
     if (!meal.length) {
-      const name = _.flatten(obj.name).join('').match(MEAL_TIME_REGEXP);
+      const name = _.flatten(obj.name).join('').match(this.PATTERN.MEAL);
       this.meals.push({
         ...obj,
         name: name[1],
@@ -171,7 +183,7 @@ class PDFMenuParser {
 
   addDate(obj) {
     if (obj.texts) {
-      const text = this.parseText(obj.texts).join().match(DATE_REGEXP);
+      const text = this.parseText(obj.texts).join().match(this.PATTERN.DATE);
       if (text && text[0]) {
         this.date.push(text[0]);
       }
@@ -221,10 +233,6 @@ class PDFMenuParser {
     const colors = [];
     const texts = data.map(obj => {
       if (obj.texts && obj.texts.length) {
-        const color = obj.texts[0].color;
-        if (colors.indexOf(color) < 0) {
-          colors.push(color);
-        }
         return this.parseText(obj.texts);
       }
       return null;
@@ -268,7 +276,7 @@ class PDFMenuParser {
   }
 
   parseDate(text) {
-    const dateMatch = text.match(DATE_REGEXP);
+    const dateMatch = text.match(this.PATTERN.DATE);
     if (!dateMatch[0]) return null;
 
     const year = new Date().getFullYear();
