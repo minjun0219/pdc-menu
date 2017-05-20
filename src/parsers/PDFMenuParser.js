@@ -118,7 +118,7 @@ class PDFMenuParser {
     // 끼니가 등록되어 있지 않을때만 등록
     if (!meal) {
       const { texts } = this.parseBoxTexts(boxTexts);
-      const isMeal = texts.findIndex(o => MEAL_REGEXP.test(o)) > -1;
+      const isMeal = texts.findIndex(o => MEAL_REGEXP.test(o.join(''))) > -1;
 
       if (isMeal) { // 끼니 등록
         this.addMeal({
@@ -161,7 +161,7 @@ class PDFMenuParser {
   addCorner(idx, obj) {
     const meal = this.getMeal(idx);
     if (!meal) return;
-    const name = obj.texts.map(o => o.text).join(' ');
+    const name = obj.texts.map(o => o.text).join('').replace(' ', '');
     meal.corner.push({
       y: obj.y,
       name,
@@ -172,7 +172,7 @@ class PDFMenuParser {
   addDate(obj) {
     if (obj.texts) {
       const text = this.parseText(obj.texts).join().match(DATE_REGEXP);
-      if (text[0]) {
+      if (text && text[0]) {
         this.date.push(text[0]);
       }
     }
@@ -253,17 +253,18 @@ class PDFMenuParser {
   }
 
   parseText(texts) {
-    return texts.reduce((prev, current) => {
-      if (/^(\(|&|-)/.test(current.text)) {
-        const last = prev[prev.length - 1];
-        if (last) {
-          last.text = `${last.text}${current.text}`;
-          return prev;
-        }
+    const text = texts.reduce((prev, current) => {
+      const last = prev[prev.length - 1];
+      // 이전 문자열이 현재 문자열에도 존재하면 이전 문자열을 제외
+      if (last && current && current.text.indexOf(last.text) > -1) {
+        prev.pop();
       }
       return prev.concat(current);
-    }, [])
-      .map(o => o.text);
+    }, []);
+
+    // 줄단위로 분리되는 같은 줄 텍스트 합침
+    const textJoin = arr => _.chain(arr).map('text').join('').value();
+    return _.chain(text).groupBy('y').map(textJoin).value();
   }
 
   parseDate(text) {
