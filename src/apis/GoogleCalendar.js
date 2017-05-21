@@ -4,7 +4,7 @@ import promisify from 'es6-promisify';
 import moment from 'moment';
 import 'moment/locale/ko';
 
-import print from '../lib/print';
+import print from '../utils/print';
 
 require('dotenv').config({ silent: true });
 
@@ -71,24 +71,27 @@ function convertEvents(menu) {
   menu.forEach(({ meal }) => {
     // 끼니
     meal.forEach(item => {
-      // 코너를 잔디에 던질 Webhook `connectInfo` 형식으로 변환
-      const data = item.corner.map(o => (
-        {
-          title: o.name,
-          description: o.menu && o.menu.join('\n')
+      const main = [];
+      const description = item.corner.map(o => {
+        if (/^중/.test(item.name) && o.name && /^코너/.test(o.name)) {
+          main.push(o.menu[0]);
         }
-      ));
+        return [o.name].concat(o.menu.map(m => ` - ${m}`)).join('\n');
+      });
 
       // 식사시간 추가
-      data.splice(0, 0, {
-        title: '식사시간',
-        description: mealTime(item.startTime, item.endTime)
-      });
+      // description.splice(0, 0, `식사시간\n - ${mealTime(item.startTime, item.endTime)}`);
+
+      // 중식 제목에 메인메뉴 표시
+      let summary = item.name;
+      if (main.length) {
+        summary = `${item.name}: ${main.join(' or ')}`;
+      }
 
       // 목록에 추가
       list.push({
-        summary: `${item.name} 메뉴`,
-        description: JSON.stringify(data),
+        summary,
+        description: description.join('\n\n'),
         start: setDate(item.startTime),
         end: setDate(item.endTime)
       });
@@ -109,7 +112,7 @@ function nextEvents(auth, endTime) {
     auth,
     calendarId: CALENDAR_ID,
     timeMin: endTime || (new Date()).toISOString(),
-    maxResults: 1,
+    maxResults: 3,
     singleEvents: true,
     orderBy: 'startTime'
   })
@@ -118,7 +121,7 @@ function nextEvents(auth, endTime) {
     if (!events.length) {
       throw Error('No upcoming events found.');
     }
-    return events[0];
+    return events;
   });
 }
 

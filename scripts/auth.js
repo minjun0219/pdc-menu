@@ -5,7 +5,6 @@ import GoogleAPIs from '../src/apis/GoogleAPIs';
 
 const gmail = google.gmail('v1');
 const calendar = google.calendar('v3');
-const drive = google.drive('v3');
 
 /**
  * 사용자 캘린더 목록

@@ -7,7 +7,7 @@ const google = require('googleapis');
 const promisify = require('es6-promisify');
 
 const { default: GoogleAPIs } = require('../src/apis/GoogleAPIs');
-const { default: print, printCatch } = require('../src/lib/print');
+const { default: print, printCatch } = require('../src/utils/print');
 
 require('dotenv').config({ silent: true });
 
@@ -43,7 +43,8 @@ GoogleAPIs()
           .then(() => {
             print(
               '이벤트가 삭제 되었습니다.',
-              ['Event ID', event.id]
+              ['Event ID', event.id],
+              ['summary', event.summary]
             );
             return event.id;
           })

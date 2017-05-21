@@ -3,8 +3,8 @@
 require('babel-register')();
 const fs = require('fs');
 const program = require('commander');
-const { parsePDFMenu } = require('../src/lib/PDFParser');
-const { printJSON, printError } = require('../src/lib/print');
+const { parsePDFMenu } = require('../src/utils/PDFParser');
+const { printJSON, printError } = require('../src/utils/print');
 
 let fileName;
 program

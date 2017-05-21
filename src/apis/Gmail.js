@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import promisify from 'es6-promisify';
 import google from 'googleapis';
-import print from '../lib/print';
+import print from '../utils/print';
 
 require('dotenv').config({ silent: true });
 

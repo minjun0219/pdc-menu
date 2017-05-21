@@ -1,0 +1,9 @@
+{
+  "apps": [{
+    "name": "pdc-menu-check-new-menu",
+    "script": "dest/checkNewMenu.js"
+  }, {
+    "name": "pdc-menu-check-next-events",
+    "script": "dest/checkNextEvents.js"
+  }]
+}

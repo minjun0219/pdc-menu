@@ -1,5 +1,6 @@
 require('dotenv').config({ silent: true });
 const axios = require('axios');
+const { default: print } = require('./print');
 
 /**
  * Jandi Webhook 전송
@@ -10,6 +11,10 @@ const axios = require('axios');
  */
 export default function JandiWebhook(message, connectInfo) {
   /* eslint quote-props: ["error", "consistent"] */
+  print(
+    '잔디로 메시지를 발송합니다.',
+    ['내용', message]
+  );
   return axios({
     method: 'post',
     url: process.env.JANDI_WEBHOOK_URL,
@@ -23,5 +28,12 @@ export default function JandiWebhook(message, connectInfo) {
       connectInfo
     }
   })
-  .then(res => res.status === 200);
+  .then(res => res.status === 200)
+  .then(() => {
+    print(
+      '잔디로 메시지를 발송했습니다.',
+      ['내용', message]
+    );
+    return true;
+  });
 }
