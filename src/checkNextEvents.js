@@ -23,7 +23,7 @@ function scheduleNextEvents(date) {
   startTime.setMinutes(30);
   printScheduled(startTime, '다음 메뉴 3건을 가져온다.');
   return schedule.scheduleJob(startTime, () => {
-    checkNextEvents(startTime);
+    checkNextEvents(startTime.toISOString());
   });
 }
 
