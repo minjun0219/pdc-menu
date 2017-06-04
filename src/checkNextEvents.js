@@ -12,9 +12,25 @@ function checkNextEvent() {
     .then(auth => NextEvent(auth))
     .then(events => events[0])
     .then(event => _.get(event, 'start.dateTime'))
-    .then(date => scheduleNextEvents(date));
+    .then(date => scheduleNextEvents(date))
+    .catch(err => {
+      printCatch(err);
+
+      // 오류 후 다시 체크
+      scheduleAfterAnHour();
+    });
 }
 checkNextEvent();
+
+// 한시간 뒤에 일정을 다시 체크
+// 오류가 나면 대책이 없어서 한시간 마다 체크
+function scheduleAfterAnHour() {
+  const date = new Date(Date.now() + (60 * 60 * 1000));
+  printScheduled(date, '1시간 뒤에 일정을 다시 체크');
+  return schedule.scheduleJob(date, () => {
+    checkNextEvents(date.toISOString());
+  });
+}
 
 // 다음 발송을 예약
 function scheduleNextEvents(date) {
@@ -42,8 +58,8 @@ function checkNextEvents(endTime) {
     .catch(err => {
       printCatch(err);
 
-      // 다음 일정이 없으면 다시 메일 체크
-      checkNextEvent();
+      // 다음 일정이 없으면 다시 체크
+      scheduleAfterAnHour();
     });
 }
 
