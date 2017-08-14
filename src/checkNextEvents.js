@@ -1,66 +1,24 @@
 import _ from 'lodash';
 import moment from 'moment';
-import schedule from 'node-schedule';
 import GoogleAPIs from './apis/GoogleAPIs';
 import { NextEvent } from './apis/GoogleCalendar';
 import Webhook from './utils/JandiWebhook';
-import print, { printScheduled, printCatch } from './utils/print';
+import print, { printCatch } from './utils/print';
 
 // start
-function checkNextEvent() {
-  GoogleAPIs()
-    .then(auth => NextEvent(auth))
-    .then(events => events[0])
-    .then(event => _.get(event, 'start.dateTime'))
-    .then(date => scheduleNextEvents(date))
-    .catch(err => {
-      printCatch(err);
-
-      // 오류 후 다시 체크
-      scheduleAfterAnHour();
-    });
-}
-checkNextEvent();
-
-// 한시간 뒤에 일정을 다시 체크
-// 오류가 나면 대책이 없어서 한시간 마다 체크
-function scheduleAfterAnHour() {
-  const date = new Date(Date.now() + (60 * 60 * 1000));
-  printScheduled(date, '1시간 뒤에 일정을 다시 체크');
-  return schedule.scheduleJob(date, () => {
-    checkNextEvents(date.toISOString());
-  });
-}
-
-// 다음 발송을 예약
-function scheduleNextEvents(date) {
-  const startTime = new Date(date);
-  startTime.setHours(12);
-  startTime.setMinutes(30);
-  printScheduled(startTime, '다음 메뉴 3건을 가져온다.');
-  return schedule.scheduleJob(startTime, () => {
-    checkNextEvents(startTime.toISOString());
-  });
-}
+checkNextEvents();
 
 /**
  * 다음 이벤트를 확인해서 3건을 가져옴
  * 이벤트가 있으면 해당 이벤트를 스케줄 등록 하고 메시지를 보냄
  * 종료시간 Parameter가 있다면 해당 시간 이후로 체크
- * @param {string} [endTime] 이전 이벤트 종료 시간
  */
-function checkNextEvents(endTime) {
+function checkNextEvents() {
   GoogleAPIs()
-    .then(auth => NextEvent(auth, endTime))
+    .then(auth => NextEvent(auth))
     .then(events => createJandiMessage(events))
     .then(data => sendMessage(data))
-    .then(date => scheduleNextEvents(date))
-    .catch(err => {
-      printCatch(err);
-
-      // 다음 일정이 없으면 다시 체크
-      scheduleAfterAnHour();
-    });
+    .catch(err => printCatch(err));
 }
 
 /**
@@ -69,7 +27,7 @@ function checkNextEvents(endTime) {
  */
 function createJandiMessage(events) {
   const current = moment(_.chain(events).first().get('start.dateTime').value());
-  const message = _.chain(events).first().get('summary').value();
+  const message = [_.chain(events).first().get('summary').value()];
   const endTime = _.chain(events).last().get('end.dateTime').value();
   const description = events.map(event => {
     let title = event.summary.match(/^((조|중|석)식)/)[1];
@@ -88,11 +46,16 @@ function createJandiMessage(events) {
       description: event.description
     };
   });
+
+  // 화요일이면 테메데이라는 메시지를 추가
+  if (current.day() === 2) {
+    message.push('오늘은 테메절! 맛있는 식사하세요. ^__^');
+  }
   print(
     '잔디 메시지를 생성합니다.',
     ['제목', message]
   );
-  return { message, description, endTime };
+  return { message: message.join('\n'), description, endTime };
 }
 
 /**

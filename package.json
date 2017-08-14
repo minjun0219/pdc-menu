@@ -4,9 +4,6 @@
   "main": "index.js",
   "scripts": {
     "auth": "babel-node scripts/auth.js",
-    "prestart": "rimraf dest && npm run lint && npm run compile",
-    "start": "node dest/main.js",
-    "start:es6": "babel-node src/main.js",
     "compile": "babel src --out-dir dest",
     "lint": "eslint ."
   },

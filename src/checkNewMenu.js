@@ -1,9 +1,8 @@
-import schedule from 'node-schedule';
 import PDFParser from './utils/PDFParser';
 import GoogleAPIs from './apis/GoogleAPIs';
 import { CheckEmail } from './apis/Gmail';
 import { InsertEvents } from './apis/GoogleCalendar';
-import { printScheduled, printCatch } from './utils/print';
+import { printCatch } from './utils/print';
 
 // start
 checkNewMenu();
@@ -25,31 +24,9 @@ function checkNewMenu() {
         .then(value => InsertEvents(value, auth))
     ))
     .then(() => {
-      // 성공하면 다음주 금요일에 다시 확인
-      checkNewMenuNextWeek();
+      // 성공
+      console.log('success');
+      process.exit();
     })
-    .catch(err => {
-      printCatch(err);
-
-      // 다시 확인
-      checkNewMenuRetry();
-    });
-}
-
-/**
- * 메일이 아직 없다면 다시 체크를 위해 스케줄 등록
- */
-function checkNewMenuNextWeek() {
-  const rule = '0 0 16 * * 5';
-  printScheduled(rule, '차주 메뉴 확인');
-  schedule.scheduleJob(rule, () => checkNewMenu());
-}
-
-/**
- * 메일이 아직 없다면 다시 체크를 위해 스케줄 등록
- */
-function checkNewMenuRetry() {
-  const rule = '0 0 */6 * * *';
-  printScheduled(rule, '메일이 도착했는지 다시 확인');
-  schedule.scheduleJob(rule, () => checkNewMenu());
+    .catch(err => printCatch(err));
 }

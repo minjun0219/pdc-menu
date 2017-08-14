@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import prettyjson from 'prettyjson';
 import cronParser from 'cron-parser';
+import { privateMessage, errorMessage } from './JandiWebhook';
 
 const log = console.log;
 const now = () => log(chalk.dim(new Date()));
@@ -39,8 +40,10 @@ export function printJSON(data) {
 export function printCatch(reason) {
   if (typeof reason !== 'object') {
     print(reason);
+    privateMessage(reason);
   } else {
     printError(reason);
+    errorMessage(reason);
   }
 }
 
