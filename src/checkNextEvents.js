@@ -5,6 +5,8 @@ import { NextEvent } from './apis/GoogleCalendar';
 import Webhook from './utils/JandiWebhook';
 import print, { printCatch } from './utils/print';
 
+require('dotenv').config({ silent: true });
+
 // start
 checkNextEvents();
 
@@ -49,7 +51,10 @@ function createJandiMessage(events) {
 
   // 화요일이면 테메데이라는 메시지를 추가
   if (current.day() === 2) {
-    message.push('오늘은 테메절! 맛있는 식사하세요. ^__^');
+    message.push('오늘은 테이블 메이트와 맛있는 식사하세요!');
+    if (process.env.TABLEMATE_URL) {
+      message.push(process.env.TABLEMATE_URL);
+    }
   }
   print(
     '잔디 메시지를 생성합니다.',

@@ -119,7 +119,7 @@ function nextEvents(auth, endTime) {
   .then(response => {
     const events = response.items;
     if (!events.length) {
-      throw Error('No upcoming events found.');
+      throw new Error('No upcoming events found.');
     }
     return events;
   });
@@ -134,16 +134,4 @@ function setDate(date) {
     dateTime: date.toISOString(),
     timeZone: TIMEZONE
   };
-}
-
-/**
- * Webhook 으로 보낼 식사시간을 String으로 만듬
- * @param {Date} startTime 시작 시간
- * @param {Date} endTime 종료 시간
- * @returns {string}
- */
-function mealTime(startTime, endTime) {
-  const start = moment(startTime).format('LT');
-  const end = moment(endTime).format('LT');
-  return `${start} ~ ${end}`;
 }
