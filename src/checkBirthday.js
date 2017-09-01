@@ -1,5 +1,5 @@
 import moment from 'moment';
-import Webhook from './utils/JandiWebhook';
+import { JandiWebhook } from './utils/JandiWebhook';
 import GoogleAPIs from './apis/GoogleAPIs';
 import { getSheetsData } from './apis/GoogleSheets';
 import print, { printCatch } from './utils/print';
@@ -38,7 +38,6 @@ function matchBirthday(rows) {
   .map(data => data[0]);
 }
 
-
 /**
  * 메시지 셋팅
  * @param {string} description JSON String
@@ -54,5 +53,5 @@ function sendJandiMessage(rows) {
     '잔디 메시지를 생성합니다.',
     ['제목', message]
   );
-  return Webhook(message);
+  return JandiWebhook(process.env.BIRTHDAY_JANDI_WEBHOOK_URL, message);
 }

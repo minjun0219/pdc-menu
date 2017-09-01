@@ -10,7 +10,7 @@ const { default: print, printError } = require('./print');
  * @param {object[]} connectInfo 메시지 하단 정보
  * @returns {Promise}
  */
-function JandiWebhook(url, message, connectInfo) {
+export function JandiWebhook(url, message, connectInfo) {
   /* eslint quote-props: ["error", "consistent"] */
   return axios({
     method: 'post',
