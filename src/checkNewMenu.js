@@ -3,6 +3,7 @@ import GoogleAPIs from './apis/GoogleAPIs';
 import { CheckEmail } from './apis/Gmail';
 import { InsertEvents } from './apis/GoogleCalendar';
 import { printCatch } from './utils/print';
+import { privateMessage } from './utils/JandiWebhook';
 
 // start
 checkNewMenu();
@@ -26,7 +27,8 @@ function checkNewMenu() {
     .then(() => {
       // 성공
       console.log('success');
-      process.exit();
+      // 잔디로 알림
+      privateMessage('다음주 메뉴를 모두 등록했어요!');
     })
     .catch(err => printCatch(err));
 }
