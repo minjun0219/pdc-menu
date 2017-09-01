@@ -2,7 +2,8 @@
   "SCOPES": [
     "https://www.googleapis.com/auth/gmail.modify",
     "https://www.googleapis.com/auth/gmail.readonly",
-    "https://www.googleapis.com/auth/calendar"
+    "https://www.googleapis.com/auth/calendar",
+    "https://www.googleapis.com/auth/spreadsheets.readonly"
   ],
   "TOKEN_FILENAME": "pdc-menu.json",
   "CLIENT_SECRET_PATH": "./config/client_secret.json"

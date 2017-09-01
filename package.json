@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "pdc-menu-parser",
+  "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "auth": "babel-node scripts/auth.js",
