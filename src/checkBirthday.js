@@ -16,7 +16,7 @@ function checkBirthday() {
   GoogleAPIs()
     .then(auth => (
       // 구글에서 데이터를 호출
-      getSheetsData(auth, 'A2:B')
+      getSheetsData(auth, 'B2:C')
 
         // 생일인지 확인
         .then(value => matchBirthday(value))
@@ -32,7 +32,7 @@ function checkBirthday() {
 function matchBirthday(rows) {
   const today = moment().format('MM-DD');
   return rows.filter(value => {
-    const date = moment(value[1]).format('MM-DD');
+    const date = moment(value[1], 'YYMMDD').format('MM-DD');
     return today === date;
   })
   .map(data => data[0]);
