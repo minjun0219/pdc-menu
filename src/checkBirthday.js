@@ -47,8 +47,9 @@ function sendJandiMessage(rows) {
     process.exit();
     return null;
   }
+  const today = moment().format('M월 D일');
   const birth = rows.map(name => `${name}프로님`);
-  const message = `${birth.join(', ')} 생일축하드려요!!!`;
+  const message = `${today}은 ${birth.join(', ')}의 생일입니다!`;
   print(
     '잔디 메시지를 생성합니다.',
     ['제목', message]
