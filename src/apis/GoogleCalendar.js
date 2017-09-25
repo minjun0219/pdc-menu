@@ -76,6 +76,7 @@ function convertEvents(menu) {
         if (/^중/.test(item.name) && o.name && /^코너/.test(o.name)) {
           main.push(o.menu[0]);
         }
+        if (!o.menu) return o.name;
         return [o.name].concat(o.menu.map(m => ` - ${m}`)).join('\n');
       });
 
