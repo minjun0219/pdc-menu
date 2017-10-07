@@ -144,7 +144,7 @@ class PDFMenuParser {
   }
 
   isMeal({ texts }) {
-    return texts.findIndex(o => this.PATTERN.MEAL.test(o.join(''))) > -1;
+    return this.PATTERN.MEAL.test(_.flattenDeep(texts).join(''));
   }
 
   isCorner({ texts }) {
