@@ -67,7 +67,7 @@ class PDFMenuParser {
     // 세로로 자름
     horizon.forEach(o => {
       // 휴무가 있을 경우 패스
-      const isHoliday = o[COLUMN_KEY].filter(t => t.text === '휴무').length;
+      const isHoliday = !!o[COLUMN_KEY].map(t => t.text).join('').match(/휴무/);
 
       // 가로로 자름
       if (!isHoliday && o[COLUMN_KEY]) {
