@@ -49,8 +49,8 @@ function createJandiMessage(events) {
     };
   });
 
-  // 화요일이면 테메데이라는 메시지를 추가
-  if (current.day() === 2) {
+  // 월요일이면 테메데이라는 메시지를 추가
+  if (current.day() === 1) {
     message.push('오늘은 테이블 메이트와 맛있는 식사하세요!');
     if (process.env.TABLEMATE_URL) {
       message.push(process.env.TABLEMATE_URL);
