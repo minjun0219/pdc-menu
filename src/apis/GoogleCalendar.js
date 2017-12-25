@@ -73,10 +73,10 @@ function convertEvents(menu) {
     meal.forEach(item => {
       const main = [];
       const description = item.corner.map(o => {
-        if (/^중/.test(item.name) && o.name && /^코너/.test(o.name)) {
+        if (!o.menu) return o.name;
+        if (/^중/.test(item.name) && o.name && /^코너/.test(o.name) && o.menu) {
           main.push(o.menu[0]);
         }
-        if (!o.menu) return o.name;
         return [o.name].concat(o.menu.map(m => ` - ${m}`)).join('\n');
       });
 
