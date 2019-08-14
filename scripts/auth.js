@@ -1,7 +1,7 @@
 import promisify from 'es6-promisify';
 import Table from 'cli-table';
 import google from 'googleapis';
-import GoogleAPIs, { refreshAccessToken } from '../src/apis/GoogleAPIs';
+import GoogleAPIs from '../src/apis/GoogleAPIs';
 
 const gmail = google.gmail('v1');
 const calendar = google.calendar('v3');

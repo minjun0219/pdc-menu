@@ -116,7 +116,7 @@ function getAttachments(message, auth) {
         ...res
       }))
       .then(data => {
-        if (data && data.filename && /\.pdf$/i.test(data.filename)) {
+        if (data && data.filename && /\.pdf$/i.test(data.filename) && !/영문/.test(data.filename)) {
           print(
             '첨부파일을 발견 했습니다.',
             ['Attachment ID', attachId],
