@@ -5,9 +5,6 @@ import { InsertEvents } from './apis/GoogleCalendar';
 import { printCatch } from './utils/print';
 import { privateMessage } from './utils/JandiWebhook';
 
-// start
-checkNewMenu();
-
 /**
  * Gmail에서 새로운 메일을 읽어서 새로운 이메일에 첨부파일이 있다면
  * 첨부파일에서 메뉴를 파싱해서 구글 캘린더에 이벤트를 등록
@@ -30,5 +27,11 @@ function checkNewMenu() {
       // 잔디로 알림
       privateMessage('다음주 메뉴를 모두 등록했어요!');
     })
+    .then(() => {
+      process.exit(0);
+    })
     .catch(err => printCatch(err));
 }
+
+// start
+checkNewMenu();

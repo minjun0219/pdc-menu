@@ -68,34 +68,13 @@ function convertEvents(menu) {
   const list = [];
 
   // 날짜별
-  menu.forEach(({ meal }) => {
-    // 끼니
-    meal.forEach(item => {
-      const main = [];
-      const description = item.corner.map(o => {
-        if (!o.menu) return o.name;
-        if (/^중/.test(item.name) && o.name && /^코너/.test(o.name) && o.menu) {
-          main.push(o.menu[0]);
-        }
-        return [o.name].concat(o.menu.map(m => ` - ${m}`)).join('\n');
-      });
-
-      // 식사시간 추가
-      // description.splice(0, 0, `식사시간\n - ${mealTime(item.startTime, item.endTime)}`);
-
-      // 중식 제목에 메인메뉴 표시
-      let summary = item.name;
-      if (main.length) {
-        summary = `${item.name}: ${main.join(' or ')}`;
-      }
-
-      // 목록에 추가
-      list.push({
-        summary,
-        description: description.join('\n\n'),
-        start: setDate(item.startTime),
-        end: setDate(item.endTime)
-      });
+  menu.forEach(item => {
+    // 목록에 추가
+    list.push({
+      summary: item.summary,
+      description: item.description,
+      start: setDate(item.startDateTime),
+      end: setDate(item.endDateTime)
     });
   });
 
