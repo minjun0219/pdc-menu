@@ -4,11 +4,11 @@ import GoogleAPIs from './apis/GoogleAPIs';
 import { NextEvent } from './apis/GoogleCalendar';
 import Webhook from './utils/JandiWebhook';
 import print, { printCatch } from './utils/print';
+import setupSentry from './setupSentry';
 
 require('dotenv').config({ silent: true });
 
-// start
-checkNextEvents();
+setupSentry();
 
 /**
  * 다음 이벤트를 확인해서 3건을 가져옴
@@ -62,4 +62,11 @@ function createJandiMessage(events) {
  */
 function sendMessage({ message, description, endTime }) {
   return Webhook(message, description).then(() => endTime);
+}
+
+// start
+try {
+  checkNextEvents();
+} catch (err) {
+  console.error(err);
 }

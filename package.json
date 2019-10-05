@@ -6,9 +6,13 @@
   "scripts": {
     "auth": "babel-node scripts/auth.js",
     "build": "babel src --out-dir dist",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "check:new-menu": "babel-node src/checkNewMenu.js",
+    "check:next-events": "babel-node src/checkNextEvents.js",
+    "check:birthday": "babel-node src/checkBirthday.js"
   },
   "dependencies": {
+    "@sentry/node": "5.6.2",
     "axios": "^0.16.1",
     "babel-cli": "^6.24.1",
     "babel-core": "^6.24.1",
@@ -32,8 +36,7 @@
     "prettyjson": "^1.2.1",
     "readline": "^1.3.0",
     "rimraf": "^2.6.1",
-    "urldecode": "^1.0.1",
-    "welstory-menu-pdf-parser": "1.0.0"
+    "urldecode": "^1.0.1"
   },
   "devDependencies": {
     "eslint": "^3.19.0",

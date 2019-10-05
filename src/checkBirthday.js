@@ -1,13 +1,14 @@
 import moment from 'moment';
+// import * as Sentry from '@sentry/node';
 import { JandiWebhook } from './utils/JandiWebhook';
 import GoogleAPIs from './apis/GoogleAPIs';
 import { getSheetsData } from './apis/GoogleSheets';
 import print, { printCatch } from './utils/print';
+import setupSentry from './setupSentry';
 
 require('dotenv').config({ silent: true });
 
-// start
-checkBirthday();
+setupSentry();
 
 /**
  * 구글 시트에서 생일인 사람들 찾고, 오늘이 생일이면 잔디로 알림을 발송
@@ -56,3 +57,6 @@ function sendJandiMessage(rows) {
   );
   return JandiWebhook(process.env.BIRTHDAY_JANDI_WEBHOOK_URL, message);
 }
+
+// start
+checkBirthday();

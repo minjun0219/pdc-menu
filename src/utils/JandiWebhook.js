@@ -1,3 +1,5 @@
+import { printCatch } from './print';
+
 require('dotenv').config({ silent: true });
 const axios = require('axios');
 const { default: print, printError } = require('./print');
@@ -11,6 +13,9 @@ const { default: print, printError } = require('./print');
  * @returns {Promise}
  */
 export function JandiWebhook(url, message, connectInfo) {
+  if (!url) {
+    throw new Error('JANDI Webhook URL이 존재하지 않아서 메시지를 보낼 수 없습니다.');
+  }
   /* eslint quote-props: ["error", "consistent"] */
   return axios({
     method: 'post',
@@ -39,10 +44,16 @@ export function JandiWebhook(url, message, connectInfo) {
     );
     return true;
   })
-  .catch(err => JandiWebhook(
-    process.env.PRIVATE_JANDI_WEBHOOK_URL,
-    `Jandi Webhook Error:\n${err}`
-  ));
+  .catch(err => {
+    if (process.env.PRIVATE_JANDI_WEBHOOK_URL) {
+      JandiWebhook(
+        process.env.PRIVATE_JANDI_WEBHOOK_URL,
+        `Jandi Webhook Error:\n${err}`
+      );
+    } else {
+      printCatch(err);
+    }
+  });
 }
 
 /**

@@ -4,6 +4,9 @@ import { CheckEmail } from './apis/Gmail';
 import { InsertEvents } from './apis/GoogleCalendar';
 import { printCatch } from './utils/print';
 import { privateMessage } from './utils/JandiWebhook';
+import setupSentry from './setupSentry';
+
+setupSentry();
 
 /**
  * Gmail에서 새로운 메일을 읽어서 새로운 이메일에 첨부파일이 있다면

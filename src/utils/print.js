@@ -66,6 +66,11 @@ export function printError(err) {
     now();
   }
   log();
+
+  // Report Error
+  if (global.Sentry) {
+    global.Sentry.captureException(err);
+  }
 }
 
 /**
