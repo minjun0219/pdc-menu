@@ -10,7 +10,9 @@ let fileName;
 program
   .usage('<file> [options]')
   .option('-l, --loc <loc>')
-  .action(file => (fileName = file))
+  .action(file => {
+    fileName = file;
+  })
   .parse(process.argv);
 
 if (fileName && /\.pdf$/i.test(fileName)) {
