@@ -1,0 +1,1 @@
+/// <reference path="node_modules/welstory-menu-pdf-parser/pdf2json.d.ts" />

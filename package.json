@@ -2,42 +2,7 @@
   "private": true,
   "name": "pdc-menu-parser",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "auth": "babel-node scripts/auth.js",
-    "build": "babel src --out-dir dist",
-    "lint": "eslint .",
-    "check:new-menu": "babel-node src/checkNewMenu.js",
-    "check:next-events": "babel-node src/checkNextEvents.js",
-    "check:birthday": "babel-node src/checkBirthday.js"
-  },
-  "dependencies": {
-    "@sentry/node": "5.6.2",
-    "axios": "^0.16.1",
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.24.1",
-    "babel-plugin-transform-async-generator-functions": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-register": "^6.24.1",
-    "base64-stream": "^0.1.3",
-    "chalk": "^1.1.3",
-    "cli-table": "^0.3.1",
-    "commander": "^2.9.0",
-    "cron-parser": "^2.4.0",
-    "dotenv": "^4.0.0",
-    "es6-promisify": "^5.0.0",
-    "google-auth-library": "^0.10.0",
-    "googleapis": "^19.0.0",
-    "lodash": "^4.17.4",
-    "moment": "^2.18.1",
-    "prettyjson": "^1.2.1",
-    "welstory-menu-pdf-parser": "^1.0.5"
-  },
   "devDependencies": {
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb-base": "^11.1.3",
-    "eslint-plugin-babel": "^4.1.1",
-    "eslint-plugin-import": "^2.2.0"
+    "firebase-tools": "^8.2.0"
   }
 }

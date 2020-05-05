@@ -1,0 +1,1 @@
+export { checkNewMenu } from './checkNewMenu'
